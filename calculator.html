@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Higgsfield ROI Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f9f9f7; color: #1a1a18; padding: 1.5rem 1rem; }
+    .calculator { max-width: 720px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e5e5e0; padding: 1.5rem; }
+    h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #888780; margin-bottom: 1.5rem; }
+    .section-label { font-size: 10px; font-weight: 600; color: #b4b2a9; letter-spacing: 0.08em; text-transform: uppercase; margin: 1.25rem 0 0.75rem; }
+    .row { display: flex; flex-direction: column; margin-bottom: 1.25rem; }
+    .row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .row label { font-size: 13px; color: #5f5e5a; flex: 1; }
+    .val { font-size: 14px; font-weight: 600; color: #1a1a18; min-width: 80px; text-align: right; }
+    input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: #e5e5e0; border-radius: 3px; outline: none; cursor: pointer; touch-action: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #1a1a18; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #1a1a18; cursor: pointer; border: none; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    .divider { border: none; border-top: 1px solid #e5e5e0; margin: 1.5rem 0; }
+    .results { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    @media (min-width: 500px) { .results { grid-template-columns: repeat(3, 1fr); } }
+    .metric { background: #f9f9f7; border-radius: 10px; padding: 0.875rem; }
+    .metric .mlabel { font-size: 11px; color: #b4b2a9; margin-bottom: 5px; line-height: 1.3; }
+    .metric .mval { font-size: 18px; font-weight: 600; color: #1a1a18; }
+    .metric .mval.green { color: #0f6e56; }
+    .credits-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    @media (min-width: 500px) { .credits-grid { grid-template-columns: repeat(3, 1fr); } }
+    .credit-card { background: #f9f9f7; border-radius: 10px; padding: 0.875rem; }
+    .credit-card .clabel { font-size: 11px; color: #b4b2a9; margin-bottom: 4px; }
+    .credit-card .cval { font-size: 17px; font-weight: 600; color: #1a1a18; margin-bottom: 2px; }
+    .credit-card .csub { font-size: 11px; color: #888780; }
+    .total-credits { background: #eef4ff; border: 1px solid #b5d4f4; border-radius: 10px; padding: 0.875rem 1rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .total-credits .tl { font-size: 13px; color: #185fa5; }
+    .total-credits .tv { font-size: 18px; font-weight: 600; color: #0c447c; white-space: nowrap; }
+    .verdict { background: #e1f5ee; border: 1px solid #9fe1cb; border-radius: 10px; padding: 0.875rem 1rem; font-size: 13px; color: #085041; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h2>ROI Calculator</h2>
+    <p class="subtitle">Adjust inputs to see potential results with Higgsfield.</p>
+
+    <p class="section-label">Video production</p>
+    <div class="row">
+      <div class="row-top"><label>Videos produced per month</label><span class="val" id="videos-out">100</span></div>
+      <input type="range" id="videos" min="10" max="5000" step="10" value="100">
+    </div>
+    <div class="row">
+      <div class="row-top"><label>Current cost per video</label><span class="val" id="vcost-out">$500</span></div>
+      <input type="range" id="vcost" min="100" max="5000" step="50" value="500">
+    </div>
+    <div class="row">
+      <div class="row-top"><label>Average days to deliver one video</label><span class="val" id="days-out">5 days</span></div>
+      <input type="range" id="days" min="1" max="14" step="1" value="5">
+    </div>
+
+    <p class="section-label">Image production</p>
+    <div class="row">
+      <div class="row-top"><label>Images produced per month</label><span class="val" id="images-out">500</span></div>
+      <input type="range" id="images" min="100" max="10000" step="100" value="500">
+    </div>
+    <div class="row">
+      <div class="row-top"><label>Current cost per image</label><span class="val" id="icost-out">$50</span></div>
+      <input type="range" id="icost" min="10" max="500" step="10" value="50">
+    </div>
+
+    <p class="section-label">Team and plan</p>
+    <div class="row">
+      <div class="row-top"><label>Team size (seats)</label><span class="val" id="seats-out">50</span></div>
+      <input type="range" id="seats" min="5" max="250" step="5" value="50">
+    </div>
+    <div class="row">
+      <div class="row-top"><label>Price per seat / month</label><span class="val" id="seat-price-out">$120</span></div>
+      <input type="range" id="seat-price" min="100" max="500" step="10" value="120">
+    </div>
+    <div class="row">
+      <div class="row-top"><label>Credits per seat / month</label><span class="val" id="credits-per-seat-out">2,500</span></div>
+      <input type="range" id="credits-per-seat" min="1000" max="5000" step="100" value="2500">
+    </div>
+
+    <hr class="divider">
+
+    <p class="section-label">Credits breakdown</p>
+    <div class="total-credits">
+      <span class="tl">Total credits per month</span>
+      <span class="tv" id="total-credits">125,000</span>
+    </div>
+    <div class="credits-grid">
+      <div class="credit-card"><div class="clabel">Kling 3.0 videos</div><div class="cval" id="kling-count">~16,667</div><div class="csub">7.5 credits each</div></div>
+      <div class="credit-card"><div class="clabel">Nano Banana Pro images</div><div class="cval" id="nano-count">62,500</div><div class="csub">2 credits each</div></div>
+      <div class="credit-card"><div class="clabel">Seedance 2.0 clips</div><div class="cval" id="seedance-count">5,000</div><div class="csub">25 credits each</div></div>
+    </div>
+
+    <p class="section-label">Results</p>
+    <div class="results">
+      <div class="metric"><div class="mlabel">Current monthly spend</div><div class="mval" id="current-spend">$75,000</div></div>
+      <div class="metric"><div class="mlabel">Higgsfield monthly cost</div><div class="mval" id="higgsfield-cost">$6,000</div></div>
+      <div class="metric"><div class="mlabel">Monthly savings</div><div class="mval green" id="savings">$69,000</div></div>
+      <div class="metric"><div class="mlabel">Annual savings</div><div class="mval green" id="annual-savings">$828,000</div></div>
+      <div class="metric"><div class="mlabel">ROI</div><div class="mval green" id="roi">1,150%</div></div>
+    </div>
+
+    <div class="verdict" id="verdict"></div>
+  </div>
+
+  <script>
+    const fmt = n => '$' + Math.round(n).toLocaleString();
+    const num = n => Math.round(n).toLocaleString();
+    const pct = n => Math.round(n).toLocaleString() + '%';
+    const KLING_COST = 7.5, NANO_COST = 2, SEEDANCE_COST = 25;
+
+    function calc() {
+      const videos = +document.getElementById('videos').value;
+      const vcost = +document.getElementById('vcost').value;
+      const days = +document.getElementById('days').value;
+      const images = +document.getElementById('images').value;
+      const icost = +document.getElementById('icost').value;
+      const seats = +document.getElementById('seats').value;
+      const seatPrice = +document.getElementById('seat-price').value;
+      const creditsPerSeat = +document.getElementById('credits-per-seat').value;
+
+      document.getElementById('videos-out').textContent = num(videos);
+      document.getElementById('vcost-out').textContent = fmt(vcost);
+      document.getElementById('days-out').textContent = days + (days === 1 ? ' day' : ' days');
+      document.getElementById('images-out').textContent = num(images);
+      document.getElementById('icost-out').textContent = fmt(icost);
+      document.getElementById('seats-out').textContent = seats;
+      document.getElementById('seat-price-out').textContent = fmt(seatPrice);
+      document.getElementById('credits-per-seat-out').textContent = num(creditsPerSeat);
+
+      const totalCredits = seats * creditsPerSeat;
+      document.getElementById('total-credits').textContent = num(totalCredits);
+      document.getElementById('kling-count').textContent = '~' + num(totalCredits / KLING_COST);
+      document.getElementById('nano-count').textContent = num(totalCredits / NANO_COST);
+      document.getElementById('seedance-count').textContent = num(totalCredits / SEEDANCE_COST);
+
+      const currentSpend = (videos * vcost) + (images * icost);
+      const higgsfieldCost = seats * seatPrice;
+      const savings = currentSpend - higgsfieldCost;
+      const annualSavings = savings * 12;
+      const roi = higgsfieldCost > 0 ? (savings / higgsfieldCost) * 100 : 0;
+
+      document.getElementById('current-spend').textContent = fmt(currentSpend);
+      document.getElementById('higgsfield-cost').textContent = fmt(higgsfieldCost);
+      document.getElementById('savings').textContent = savings > 0 ? fmt(savings) : '$0';
+      document.getElementById('annual-savings').textContent = annualSavings > 0 ? fmt(annualSavings) : '$0';
+      document.getElementById('roi').textContent = roi > 0 ? pct(roi) : '0%';
+
+      document.getElementById('verdict').textContent =
+        `At ${num(videos)} videos and ${num(images)} images per month, Higgsfield saves your team ${savings > 0 ? fmt(savings) : '$0'} every month and cuts video delivery from ${days} ${days === 1 ? 'day' : 'days'} to minutes.`;
+    }
+
+    const ids = ['videos','vcost','days','images','icost','seats','seat-price','credits-per-seat'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input', calc);
+      el.addEventListener('change', calc);
+      el.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+      el.addEventListener('touchmove', e => { e.stopPropagation(); calc(); }, { passive: true });
+      el.addEventListener('touchend', calc, { passive: true });
+    });
+
+    calc();
+  </script>
+</body>
+</html>
